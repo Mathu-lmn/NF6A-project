@@ -1,0 +1,5 @@
+UID,Name,Location,Bikes,Nb_rents,Nb_returns
+001,Los_Santos,[-119;37],[002;004],4,7
+002,Vinewood,[114;36],[001;003],5,3
+003,Little_Seoul,[-18;12],[005],2,1
+004,Vespucci,[-75;53],[006;007],3,2
