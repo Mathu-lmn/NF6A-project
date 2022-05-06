@@ -1,4 +1,6 @@
 import csv
+import pandas as pd
+
 
 class Bikes:
    def __init__(self, row, header):
@@ -6,7 +8,7 @@ class Bikes:
    def __repr__(self):
        return self.UID
 
-data = list(csv.reader(open('Bikes.csv')))
+data = list(csv.reader(open('Bikes.csv'), delimiter=','))
 bikes = [Bikes(i, data[0]) for i in data[1:]]
 
 print(bikes[2].UID)
@@ -18,49 +20,33 @@ class Stations:
    def __repr__(self):
        return self.UID
 
-data = list(csv.reader(open('Stations.csv')))
+data = list(csv.reader(open('Stations.csv'), delimiter=','))
 stations = [Stations(i, data[0]) for i in data[1:]]
 
 print(stations[3].Location)
 
-# stationsfile = 'Stations.csv'
-# def import_stations(stationsfile):
-#     """
-#     Import all the stations from the file.
-#     """
-#     with open(stationsfile) as csvfile:
-#         reader = csv.reader(csvfile, delimiter=',')
-#         for row in reader:
-#             station = Stations()
-#             station.UID = row[0]
-#             station.Name = row[1]
-#             station.Location = [list(row[2])]
-#             station.Bikes = [list(row[3])]
-#             station.Nb_rents = row[4]
-#             station.Nb_returns = row[5]
-#         return station
 
-# bikefile = 'Bikes.csv'
-# def import_bikes(bikefile):
-#     """
-#     Import all the bikes from the file.
-#     """
-#     with open(bikefile) as csvfile:
-#         reader = csv.reader(csvfile, delimiter=',')
-#         for row in reader:
-#             bike = Bikes()
-#             bike.UID = row[0]
-#             bike.Battery_percent = row[1]
-#             bike.Nb_days = row[2]
-#             bike.Nb_rents = row[3]
-#         return bike
+def dock_bike():
+    """
+    Dock a bike at a specific station.
+    """
+    is_docked = False
+    i = int(input('Enter station UID: ')) -1
+    j = str(input('Enter bike UID: '))
+    df = pd.read_csv('Stations.csv', sep=',')
+    for x in range(len(df)):
+        if j in df.loc[x,'Bikes']:
+            print("The bike is already docked to another station.")
+            is_docked = True
+        else:
+            pass
+    if is_docked == False:    
+        df.iloc[i,3] = df.iloc[i,3] + ',' + str(j)
+    df.to_csv('Stations.csv', index=False)
 
-def dock_bike(station, bike):
-    """
-    Dock a bike at a station.
-    """
-    # TODO
-    pass
+# print(pd.read_csv('Stations.csv', sep=','))
+df = pd.read_csv('Stations.csv', sep=',')
+dock_bike()
 
 def display_stations_and_bikes():
     """
