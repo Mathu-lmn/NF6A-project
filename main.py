@@ -46,7 +46,7 @@ def dock_bike():
     #     df.iloc[i,3] = df.iloc[i,3] + ',' + str(j)
     # df.to_csv('Stations.csv', index=False)
 
-dock_bike()
+#dock_bike()
 
 def display_stations():
     """
@@ -77,11 +77,26 @@ def rent_bike():
     User will rent a bike from a station, will return it after x minutes to another or the same station.
     """
     bike = input('Enter bike UID: ')
-    arrival_station = input('Enter station UID: ')
-    rental_time = input('Enter time of rental: ')
-    
-    
+    arrival_station = int(input('Enter station UID: '))
+    rental_time = int(input('Enter time of rental: ')) * 2
+    bikes[int(bike)-1].battery_percent = int(bikes[int(bike)-1].battery_percent) - rental_time
+    if bikes[int(bike)-1].battery_percent < 0:
+        print(f"You can't rent this bike for {rental_time//2} minutes.")
+    else :
+        bikes[int(bike)-1].Nb_rents = int(bikes[int(bike)-1].Nb_rents) + 1
+        for i in range(0,len(stations)):
+            # print(f"loop for station {i}, uid is {stations[i].UID} and arrival station is {arrival_station}")
+            if bike in stations[i].Bikes:
+                stations[i].Bikes = stations[i].Bikes.replace(bike, ' ')
+                stations[i].Bikes = stations[i].Bikes.replace(', ,', ',')
+                stations[i].Bikes = stations[i].Bikes.replace(', ', '')
+                stations[i].Bikes = stations[i].Bikes.replace(' ,', '')
+            if int(stations[i].UID) == int(arrival_station):
+                stations[i].Bikes += f',{bike}'
 
+
+rent_bike()
+display_stations()
 def maintenance_defective_bikes():
     """
     Maintenance of all the defective bikes.
