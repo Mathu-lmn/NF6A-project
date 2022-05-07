@@ -1,5 +1,4 @@
 import csv
-from tempfile import tempdir
 import pandas as pd
 
 
@@ -40,12 +39,14 @@ def dock_bike():
         else:
             pass
     if is_docked == False:    
-        df.iloc[i,3] = df.iloc[i,3] + ',' + str(j)
-    df.to_csv('Stations.csv', index=False)
+        stations[i].Bikes += f',{j}'
+    
+    # Deleted because it changed the file and not the imported stations array which caused problems after
+    # if is_docked == False:    
+    #     df.iloc[i,3] = df.iloc[i,3] + ',' + str(j)
+    # df.to_csv('Stations.csv', index=False)
 
-# print(pd.read_csv('Stations.csv', sep=','))
-#df = pd.read_csv('Stations.csv', sep=',')
-#dock_bike()
+dock_bike()
 
 def display_stations():
     """
@@ -68,16 +69,17 @@ def display_stations():
                         pass
             print(f"{stations[x].UID}\t {stations[x].Location}\t {','.join(i)}")
 
-#display_stations()
+display_stations()
     
 
-def rent_bike(station, bike):
+def rent_bike():
     """
     User will rent a bike from a station, will return it after x minutes to another or the same station.
     """
     bike = input('Enter bike UID: ')
     arrival_station = input('Enter station UID: ')
     rental_time = input('Enter time of rental: ')
+    
     
 
 def maintenance_defective_bikes():
