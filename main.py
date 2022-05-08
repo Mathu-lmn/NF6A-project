@@ -69,7 +69,7 @@ def display_stations():
                         pass
             print(f"{stations[x].UID}\t {stations[x].Location}\t {','.join(i)}")
 
-display_stations()
+#display_stations()
     
 
 def rent_bike():
@@ -91,12 +91,43 @@ def rent_bike():
                 stations[i].Bikes = stations[i].Bikes.replace(', ,', ',')
                 stations[i].Bikes = stations[i].Bikes.replace(', ', '')
                 stations[i].Bikes = stations[i].Bikes.replace(' ,', '')
+                stations[i].Nb_rents = int(stations[i].Nb_rents) + 1
             if int(stations[i].UID) == int(arrival_station):
                 stations[i].Bikes += f',{bike}'
+                stations[i].Nb_returns = int(stations[i].Nb_returns) + 1
 
 
-rent_bike()
-display_stations()
+#rent_bike()
+#display_stations()
+
+def summary():
+    """
+    Summary of the bikes and stations.
+    """
+    print('Bikes sorted by number of days in use\nUID\tBattery\tNb_days')
+    sorted_bikes_uid1 = sorted(bikes, key=lambda x: int(x.Nb_days), reverse=True)
+    for x in range(len(bikes)):
+        print(f"{sorted_bikes_uid1[x].UID}\t {sorted_bikes_uid1[x].battery_percent}\t {sorted_bikes_uid1[x].Nb_days}")
+    pass
+    print('Bikes sorted by number of rentals\nUID\tBattery\tNb_rents')
+    sorted_bikes_uid2 = sorted(bikes, key=lambda x: int(x.Nb_rents), reverse=True)
+    for x in range(len(bikes)):
+        print(f"{sorted_bikes_uid2[x].UID}\t {sorted_bikes_uid2[x].battery_percent}\t {sorted_bikes_uid2[x].Nb_rents}")
+    pass
+    print("Stations sorted by number of rents\nUID\tLocation\tNb_rents")
+    sorted_stations_uid1 = sorted(stations, key=lambda x: int(x.Nb_rents), reverse=True)
+    for x in range(len(stations)):
+        print(f"{sorted_stations_uid1[x].UID}\t {sorted_stations_uid1[x].Name}\t {sorted_stations_uid1[x].Nb_rents}")
+    pass
+    print("Stations sorted by number of returns\nUID\tLocation\tNb_returns")
+    sorted_stations_uid2 = sorted(stations, key=lambda x: int(x.Nb_returns), reverse=True)
+    for x in range(len(stations)):
+        print(f"{sorted_stations_uid2[x].UID}\t {sorted_stations_uid2[x].Name}\t {sorted_stations_uid2[x].Nb_returns}")
+    pass
+
+summary()
+
+
 def maintenance_defective_bikes():
     """
     Maintenance of all the defective bikes.
