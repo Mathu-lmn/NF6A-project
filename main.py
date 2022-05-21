@@ -1,5 +1,13 @@
 import csv
+from ctypes import *
 import pandas as pd
+
+def open_dll(name='c_libs.dll'):
+    """
+    Load the c library.
+    """
+    return CDLL(name)
+
 
 
 class Bikes:
@@ -52,11 +60,11 @@ def display_stations():
     """
     Display all stations and the bikes docked to it in a descending order according to their battery level.
     """
-    print('Stations\nUID\tLocation\tBikes')
+    print('Stations\nUID\tName\t\tBikes')
     for x in range(len(stations)):
         i = stations[x].Bikes.split(',')
         if len(i) == 1:
-            print(f"{stations[x].UID}\t {stations[x].Location}\t {stations[x].Bikes}")
+            print(f"{stations[x].UID}\t {stations[x].Name}\t {stations[x].Bikes}")
         else:
             for y in range(len(i)-1):
                 for j in range(0,len(i)-y-1):
@@ -67,9 +75,9 @@ def display_stations():
                         i[j] = bikes[int(k)-1].UID
                     else:
                         pass
-            print(f"{stations[x].UID}\t {stations[x].Location}\t {','.join(i)}")
+            print(f"{stations[x].UID}\t {stations[x].Name}\t {','.join(i)}")
 
-#display_stations()
+# display_stations()
     
 
 def rent_bike():
@@ -82,6 +90,7 @@ def rent_bike():
     bikes[int(bike)-1].battery_percent = int(bikes[int(bike)-1].battery_percent) - rental_time
     if bikes[int(bike)-1].battery_percent < 0:
         print(f"You can't rent this bike for {rental_time//2} minutes.")
+        bikes[int(bike)-1].battery_percent = int(bikes[int(bike)-1].battery_percent) + rental_time
     else :
         bikes[int(bike)-1].Nb_rents = int(bikes[int(bike)-1].Nb_rents) + 1
         for i in range(0,len(stations)):
@@ -104,33 +113,47 @@ def summary():
     """
     Summary of the bikes and stations.
     """
-    print('Bikes sorted by number of days in use\nUID\tBattery\tNb_days')
+    print('\nBikes sorted by number of days in use\nUID\tBattery\tNb_days')
     sorted_bikes_uid1 = sorted(bikes, key=lambda x: int(x.Nb_days), reverse=True)
     for x in range(len(bikes)):
         print(f"{sorted_bikes_uid1[x].UID}\t {sorted_bikes_uid1[x].battery_percent}\t {sorted_bikes_uid1[x].Nb_days}")
     pass
-    print('Bikes sorted by number of rentals\nUID\tBattery\tNb_rents')
+    print('\nBikes sorted by number of rentals\nUID\tBattery\tNb_rents')
     sorted_bikes_uid2 = sorted(bikes, key=lambda x: int(x.Nb_rents), reverse=True)
     for x in range(len(bikes)):
         print(f"{sorted_bikes_uid2[x].UID}\t {sorted_bikes_uid2[x].battery_percent}\t {sorted_bikes_uid2[x].Nb_rents}")
     pass
-    print("Stations sorted by number of rents\nUID\tLocation\tNb_rents")
+    print("\nStations sorted by number of rents\nUID\tName\t\tNb_rents")
     sorted_stations_uid1 = sorted(stations, key=lambda x: int(x.Nb_rents), reverse=True)
     for x in range(len(stations)):
         print(f"{sorted_stations_uid1[x].UID}\t {sorted_stations_uid1[x].Name}\t {sorted_stations_uid1[x].Nb_rents}")
     pass
-    print("Stations sorted by number of returns\nUID\tLocation\tNb_returns")
+    print("\nStations sorted by number of returns\nUID\tName\t\tNb_returns")
     sorted_stations_uid2 = sorted(stations, key=lambda x: int(x.Nb_returns), reverse=True)
     for x in range(len(stations)):
         print(f"{sorted_stations_uid2[x].UID}\t {sorted_stations_uid2[x].Name}\t {sorted_stations_uid2[x].Nb_returns}")
     pass
 
-summary()
+# summary()
 
 
 def maintenance_defective_bikes():
     """
     Maintenance of all the defective bikes.
     """
-    # TODO
-    pass
+    defective_bikes = []
+    stations_visit = [0]
+    nb_def_bikes = int(input('Enter number of defective bikes: '))
+    for i in range(0, nb_def_bikes):
+        defective_bikes.append(int(input('Enter UID of the bike: ')))
+    for i in range(0, len(bikes)):
+        if bikes[i].UID not in defective_bikes:
+            bikes[i].nb_days += 1
+    for i in range(0,len(stations)):
+        for j in range(0,len(defective_bikes)):
+            if defective_bikes[j] in stations[i].Bikes & stations[i].UID not in stations_visit:
+                stations_visit.append(stations[i].UID)
+
+
+# if __name__ == '__main__':
+#     c_lib = open_dll()
