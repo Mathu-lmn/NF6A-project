@@ -44,15 +44,15 @@ int main()
     // printf("%d", values[1].x_locations);
 }
 
-float dist(dict a, dict b)
-{
+float dist(dict a, dict b) {
     return sqrt(pow(a.x_locations - b.x_locations, 2) + pow(a.y_locations - b.y_locations, 2));
 }
 
-int tsp_with_coords(int stations_to_visit[], dict values[], size_t size){
+int tsp_with_coords(int stations_to_visit[], size_t size, dict values[]) {
     int cost[size][size];
     int visited[size];
     int costs = 0;
+    int order[size];
 
     for (int i = 0; i < size; i++)
         visited[i] = 0;
@@ -70,11 +70,11 @@ int tsp_with_coords(int stations_to_visit[], dict values[], size_t size){
             if (visited[j] == 0 && cost[i][j] < min){
                 min = cost[i][j];
                 min_index = j;
+                order[i] = min_index;
             }
         }
         costs += min;
         visited[min_index] = 1;
     }
-
-    return costs;
+    return order;
 }
