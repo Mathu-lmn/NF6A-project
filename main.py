@@ -10,8 +10,7 @@ import ctypes as ct
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
-from sympy import ordered, true
-
+from termcolor import colored
 
 def open_dll(name='./testlib.dll'):
     """!
@@ -178,7 +177,7 @@ def maintenance_defective_bikes():
     Maintenance of all the defective bikes entered by the user.
     """
     defective_bikes = []
-    stations_visit = [0]
+    stations_visit = []
     nb_def_bikes = int(input('Enter number of defective bikes: '))
     for i in range(0, nb_def_bikes):
         defective_bikes.append(int(input('Enter UID of the bike: ')))
@@ -194,6 +193,7 @@ def maintenance_defective_bikes():
         for j in range(0,len(defective_bikes)):
             if str(defective_bikes[j]) in stations[i].Bikes and int(stations[i].UID) not in stations_visit:
                 stations_visit.append(int(stations[i].UID))
+    stations_visit = list(dict.fromkeys(stations_visit))
     array = (ct.c_int * len(stations_visit))(*stations_visit)
     result = (ct.c_int * len(stations_visit))()
     # Execute the tsp algorithm
@@ -213,8 +213,44 @@ def maintenance_defective_bikes():
             G.add_edge(stations[int(result[i])-1].UID, stations[int(result[i+1])-1].UID, weight=1)
         else:
             G.add_edge(stations[int(result[i])-1].UID, 'Depot', weight=0)
-    nx.draw(G, pos=nx.get_node_attributes(G, 'pos'), with_labels=True, arrows=true)
+    nx.draw(G, pos=nx.get_node_attributes(G, 'pos'), with_labels=True)
     plt.show()
 
 
-maintenance_defective_bikes()
+# maintenance_defective_bikes()
+
+# Create a user panel in the terminal to navigate through the program
+def user_panel():
+    """
+    User panel to navigate through the program.
+    """
+    print(colored('\nWelcome to the bike rental program!', 'green', attrs=['bold', 'underline']))
+    print('\nPlease select an option:\n1. Rent a bike\n2. Dock a bike\n3. Display the stations\n4. Summary\n5. Execute the maintenance of the defective bikes\n',colored('\r6. Exit', 'red', attrs=['bold']))
+    while True:
+        try:
+            choice = int(input('\nEnter your choice: '))
+            if choice == 1:
+                rent_bike()
+                user_panel()
+            elif choice == 2:
+                dock_bike()
+                user_panel()
+            elif choice == 3:
+                display_stations()
+                user_panel()
+            elif choice == 4:
+                summary()
+                user_panel()
+            elif choice == 5:
+                maintenance_defective_bikes()
+                user_panel()
+            elif choice == 6:
+                print('\nThank you for using the bike rental program!')
+                break
+            else:
+                print('\nPlease enter a valid choice!')
+                user_panel()
+        except ValueError:
+            print('\nPlease enter a valid choice!')
+            user_panel()
+user_panel()
