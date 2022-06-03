@@ -1,10 +1,19 @@
+"""!
+@file main.py
+@brief Main file of the project.
+@author Mathurin Lemoine
+@date 2022
+@version 1.0
+"""
 import csv
 import ctypes as ct
 import pandas as pd
 
 def open_dll(name='./testlib.dll'):
-    """
+    """!
     Load the c library.
+    @param name: Name of the DLL file.
+    @return: The library.
     """
     return ct.CDLL(name)
 
@@ -13,10 +22,22 @@ c_lib = open_dll()
 
 
 class Bikes:
-   def __init__(self, row, header):
-       self.__dict__ = dict(zip(header, row)) 
-   def __repr__(self):
-       return self.UID
+    """
+    Class to manage the bikes.
+    """
+    def __init__(self, row, header):
+        """!
+        Constructor of the class.
+        @param row: Row of the CSV file.
+        @param header: Header of the CSV file.
+        """
+        self.__dict__ = dict(zip(header, row)) 
+    def __repr__(self):
+        """!
+        Representation of the class.
+        @return: String.
+        """
+        return self.UID
 
 data = list(csv.reader(open('Bikes.csv'), delimiter=','))
 bikes = [Bikes(i, data[0]) for i in data[1:]]
@@ -25,11 +46,22 @@ bikes = [Bikes(i, data[0]) for i in data[1:]]
 
 
 class Stations:
-   def __init__(self, row, header):
-       self.__dict__ = dict(zip(header, row)) 
-   def __repr__(self):
-       return self.UID
-
+    """
+    Class to manage the stations.
+    """
+    def __init__(self, row, header):
+        """!
+        Constructor of the class.
+        @param row: Row of the CSV file.
+        @param header: Header of the CSV file.
+        """
+        self.__dict__ = dict(zip(header, row)) 
+    def __repr__(self):
+        """!
+        Representation of the class.
+        @return: String.
+        """
+        return self.UID
 data = list(csv.reader(open('Stations.csv'), delimiter=','))
 stations = [Stations(i, data[0]) for i in data[1:]]
 
@@ -148,6 +180,9 @@ def maintenance_defective_bikes():
     nb_def_bikes = int(input('Enter number of defective bikes: '))
     for i in range(0, nb_def_bikes):
         defective_bikes.append(int(input('Enter UID of the bike: ')))
+    # Resetting the nb days of defective bikes
+    for i in range(0, nb_def_bikes):
+        bikes[defective_bikes[i]-1].Nb_days = 0
     for i in range(0, len(bikes)):
         if bikes[i].UID not in defective_bikes:
             bikes[i].Nb_days = int(bikes[i].Nb_days) + 1
@@ -162,8 +197,4 @@ def maintenance_defective_bikes():
     for i in range(0, len(result)):
         print(f"{stations[int(result[i])-1].UID}\t {stations[int(result[i])-1].Name}")
 
-maintenance_defective_bikes()        
-
-
-# if __name__ == '__main__':
-#     c_lib = open_dll()
+maintenance_defective_bikes()

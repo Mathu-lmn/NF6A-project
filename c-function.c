@@ -1,8 +1,21 @@
+/**
+ * @file c-function.c
+ * @author Mathurin Lemoine
+ * @brief Solving the TSP problem with the C language
+ * @version 1.0
+ * @date 03/06/2022
+ */
+
 #include "c-function.h" 
 int j = 1;
 int i = 0;
 
-
+/**
+ * @brief Structure containing the informations about a station
+ * @param UID : Unique ID of the station
+ * @param x_locations : x-coordinate of the station
+ * @param y_locations : y-coordinate of the station
+ */
 typedef struct key_value
 {
     int UID;
@@ -10,12 +23,25 @@ typedef struct key_value
     int y_locations;
 } dict;
 
+/**
+ * @brief Function to calculate the distance between two stations
+ * @param[in] a : Station 1
+ * @param[in] b : Station 2
+ * @return The distance between the two stations
+ */
 float dist(dict a, dict b) {
     return sqrt(pow(a.x_locations - b.x_locations, 2) + pow(a.y_locations - b.y_locations, 2));
 }
 
+/**
+ * @brief Function that returns the path of the TSP
+ * @param[in] stations_to_visit : List of stations to visit
+ * @param[in] size : Size of the list of stations to visit
+ * @param[out] order : The order of the stations to visit
+ * @return The path of the TSP
+ */
 void tsp_with_coords(int stations_to_visit[], size_t size, int order[]) {
-
+    // Opening the file containing the informations about the stations and storing them in the structure previously defined
     FILE *fp;
     char *token;
     fp = fopen("Stations.csv", "r");
@@ -43,19 +69,19 @@ void tsp_with_coords(int stations_to_visit[], size_t size, int order[]) {
         i++;
     }
     fclose(fp);
-
+    // If the size of the list of stations to visit is 1, the path is the only station
     if (size == 1) {
         order[0] = stations_to_visit[0];
         return;
     }
-
+    // Defining the matrix of distances between the stations
     int cost[size][size];
     for (int i = 0; i < size; i++){
         for (int j = 0; j < size; j++){
             cost[i][j] = dist(values[stations_to_visit[i]], values[stations_to_visit[j]]);
         }
     }
-// now we want to find the minimum cost path
+// Finding the minimum cost path
     int min_cost_path[size];
     int min_cost = INT_MAX;
     int min_cost_path_index = 0;
@@ -64,6 +90,7 @@ void tsp_with_coords(int stations_to_visit[], size_t size, int order[]) {
         cost_path[0] = stations_to_visit[i];
         int cost_path_index = 1;
         int cost_path_total = 0;
+        // Finding the cost of the path
         for (int j = 0; j < size; j++){
             if (j == i){
                 continue;
@@ -72,6 +99,7 @@ void tsp_with_coords(int stations_to_visit[], size_t size, int order[]) {
             cost_path_index++;
             cost_path_total += cost[i][j];
         }
+        // If the cost of the path is lower than the minimum cost, the minimum cost is updated and the path is stored
         if (cost_path_total < min_cost){
             min_cost = cost_path_total;
             min_cost_path_index = i;
@@ -80,17 +108,9 @@ void tsp_with_coords(int stations_to_visit[], size_t size, int order[]) {
             }
         }
     }
+    // Storing the path in the order array
     order[0] = min_cost_path[0];
     for (int i = 1; i < size; i++){
         order[i] = min_cost_path[i];
     }
 }
-
-// void main(){
-//     int stations_to_visit[] = {1, 2, 3};
-//     int order[3];
-//     tsp_with_coords(stations_to_visit, 3, order);
-//     for (int i = 0; i < 3; i++) {
-//         printf("%d\n", order[i]);
-//     }
-// }
