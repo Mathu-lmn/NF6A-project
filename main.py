@@ -245,7 +245,7 @@ def user_panel():
                 maintenance_defective_bikes()
                 user_panel()
             elif choice == 6:
-                print('\nThank you for using the bike rental program!')
+                print(colored('\nThank you for using the bike rental program!', 'red', attrs=['reverse']))
                 break
             else:
                 print('\nPlease enter a valid choice!')
