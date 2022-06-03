@@ -1,12 +1,14 @@
 import csv
-from ctypes import *
+import ctypes as ct
 import pandas as pd
 
-def open_dll(name='c_libs.dll'):
+def open_dll(name='./testlib.dll'):
     """
     Load the c library.
     """
-    return CDLL(name)
+    return ct.CDLL(name)
+
+open_dll()
 
 
 
