@@ -8,7 +8,7 @@ def open_dll(name='./testlib.dll'):
     """
     return ct.CDLL(name)
 
-open_dll()
+c_lib = open_dll()
 
 
 
@@ -150,11 +150,19 @@ def maintenance_defective_bikes():
         defective_bikes.append(int(input('Enter UID of the bike: ')))
     for i in range(0, len(bikes)):
         if bikes[i].UID not in defective_bikes:
-            bikes[i].nb_days += 1
+            bikes[i].Nb_days = int(bikes[i].Nb_days) + 1
     for i in range(0,len(stations)):
         for j in range(0,len(defective_bikes)):
-            if defective_bikes[j] in stations[i].Bikes & stations[i].UID not in stations_visit:
-                stations_visit.append(stations[i].UID)
+            # print(f"{defective_bikes[j]} is in {stations[i].Bikes}")
+            if str(defective_bikes[j]) in stations[i].Bikes and int(stations[i].UID) not in stations_visit:
+                stations_visit.append(int(stations[i].UID))
+    array = (ct.c_int * len(stations_visit))(*stations_visit)
+    result = (ct.c_int * len(stations_visit))()
+    c_lib.tsp_with_coords(array, len(stations_visit), result)
+    for i in range(0, len(result)):
+        print(f"{stations[int(result[i])-1].UID}\t {stations[int(result[i])-1].Name}")
+
+maintenance_defective_bikes()        
 
 
 # if __name__ == '__main__':
