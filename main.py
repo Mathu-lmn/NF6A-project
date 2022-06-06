@@ -11,6 +11,7 @@ import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
 from termcolor import colored
+import time
 
 def open_dll(name='./testlib.dll'):
     """!
@@ -231,18 +232,28 @@ def user_panel():
             choice = int(input('\nEnter your choice: '))
             if choice == 1:
                 rent_bike()
+                print("Executing the user panel...")
+                time.sleep(20)
                 user_panel()
             elif choice == 2:
                 dock_bike()
+                print("Executing the user panel...")
+                time.sleep(20)                
                 user_panel()
             elif choice == 3:
                 display_stations()
+                print("Executing the user panel...")
+                time.sleep(20)
                 user_panel()
             elif choice == 4:
                 summary()
+                print("Executing the user panel...")
+                time.sleep(20)
                 user_panel()
             elif choice == 5:
                 maintenance_defective_bikes()
+                print("Executing the user panel...")
+                time.sleep(20)
                 user_panel()
             elif choice == 6:
                 print(colored('\nThank you for using the bike rental program!', 'red', attrs=['reverse']))
