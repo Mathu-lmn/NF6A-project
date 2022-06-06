@@ -85,6 +85,7 @@ def dock_bike():
             pass
     if is_docked == False:    
         stations[i].Bikes += f',{j}'
+        print(f"The bike {j} is now docked to the station {stations[i].UID}.")
 #dock_bike()
 
 def display_stations():
@@ -232,36 +233,46 @@ def user_panel():
             choice = int(input('\nEnter your choice: '))
             if choice == 1:
                 rent_bike()
-                print("Executing the user panel...")
+                print("Showing panel in 20 seconds...")
                 time.sleep(20)
+                print("Executing the user panel...")
+                time.sleep(2)
                 user_panel()
             elif choice == 2:
                 dock_bike()
+                print("Showing panel in 20 seconds...")
+                time.sleep(20)
                 print("Executing the user panel...")
-                time.sleep(20)                
+                time.sleep(2)
                 user_panel()
             elif choice == 3:
                 display_stations()
-                print("Executing the user panel...")
+                print("Showing panel in 20 seconds...")
                 time.sleep(20)
+                print("Executing the user panel...")
+                time.sleep(2)
                 user_panel()
             elif choice == 4:
                 summary()
-                print("Executing the user panel...")
+                print("Showing panel in 20 seconds...")
                 time.sleep(20)
+                print("Executing the user panel...")
+                time.sleep(2)
                 user_panel()
             elif choice == 5:
                 maintenance_defective_bikes()
-                print("Executing the user panel...")
+                print("Showing panel in 20 seconds...")
                 time.sleep(20)
+                print("Executing the user panel...")
+                time.sleep(2)
                 user_panel()
             elif choice == 6:
                 print(colored('\nThank you for using the bike rental program!', 'red', attrs=['reverse']))
                 break
             else:
-                print('\nPlease enter a valid choice!')
+                print(colored('\nPlease enter a valid choice!', 'red', attrs=['bold']))
                 user_panel()
         except ValueError:
-            print('\nPlease enter a valid choice!')
+            print(colored('\nPlease enter a valid choice!', 'red', attrs=['bold']))
             user_panel()
 user_panel()
