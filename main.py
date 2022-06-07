@@ -74,9 +74,9 @@ def dock_bike():
     Dock a new bike at a specific station.
     """
     global bikes
-    station = int(input('Enter UID of the station you want to dock the new bike: ')) -1
+    station = int(input('Enter UID of the station you want to dock the new bike: '))
     # UID of the new bike is the next available UID
-    bike = int(bikes[-1].UID) + 1
+    bike = str(int(bikes[-1].UID) + 1)
     # If the bike already exists in the system, you can't dock it
     if bike in bikes:
         print('This bike already exists in the system.')
@@ -87,8 +87,9 @@ def dock_bike():
         df.to_csv('Stations.csv', sep=',')
         # Add the new bike with 100% battery level, 0 days and 0 rents
         df = pd.read_csv('Bikes.csv', sep=',')
-        df.append({'UID': bike, 'battery_percent': '100', 'Nb_days': '0', 'Nb_rents': '0'})
-        df.to_csv('Bikes.csv', sep=',')
+        df = df.append({'UID': bike, 'battery_percent': 100, 'Nb_days': 0, 'Nb_rents': 0}, ignore_index=True)
+        print(df)
+        df.to_csv('Bikes.csv', sep=',', index=False, header=True)
         print('Bike added.')
         # Read the modified files and update the class variables
         data = list(csv.reader(open('Stations.csv'), delimiter=','))
