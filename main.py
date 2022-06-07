@@ -24,7 +24,6 @@ def open_dll(name='./testlib.dll'):
 c_lib = open_dll()
 
 
-
 class Bikes:
     """
     Class to manage the bikes.
@@ -69,23 +68,49 @@ class Stations:
 data = list(csv.reader(open('Stations.csv'), delimiter=','))
 stations = [Stations(i, data[0]) for i in data[1:]]
 
+
 def dock_bike():
     """
-    Dock a bike at a specific station.
+    Dock a new bike at a specific station.
     """
-    is_docked = False
-    i = int(input('Enter station UID: ')) -1
-    j = str(input('Enter bike UID: '))
-    df = pd.read_csv('Stations.csv', sep=',')
-    for x in range(len(df)):
-        if j in df.loc[x,'Bikes']:
-            print("The bike is already docked to another station.")
-            is_docked = True
-        else:
-            pass
-    if is_docked == False:    
-        stations[i].Bikes += f',{j}'
-        print(f"The bike {j} is now docked to the station {stations[i].UID}.")
+    global bikes
+    station = int(input('Enter UID of the station you want to dock the new bike: ')) -1
+    # UID of the new bike is the next available UID
+    bike = int(bikes[-1].UID) + 1
+    # If the bike already exists in the system, you can't dock it
+    if bike in bikes:
+        print('This bike already exists in the system.')
+    else:
+        df = pd.read_csv('Stations.csv', sep=',')
+        df.set_index('UID', inplace=True)
+        df.at[station, 'Bikes'] += f',{bike}'
+        df.to_csv('Stations.csv', sep=',')
+        # Add the new bike with 100% battery level, 0 days and 0 rents
+        df = pd.read_csv('Bikes.csv', sep=',')
+        df.append({'UID': bike, 'battery_percent': '100', 'Nb_days': '0', 'Nb_rents': '0'})
+        df.to_csv('Bikes.csv', sep=',')
+        print('Bike added.')
+        # Read the modified files and update the class variables
+        data = list(csv.reader(open('Stations.csv'), delimiter=','))
+        stations = [Stations(i, data[0]) for i in data[1:]]
+        data = list(csv.reader(open('Bikes.csv'), delimiter=','))
+        bikes = [Bikes(i, data[0]) for i in data[1:]]
+
+
+dock_bike()
+    
+    
+    
+    
+    # for x in range(len(df)):
+    #     if j in df.loc[x,'Bikes']:
+    #         print("The bike is already docked to another station.")
+    #         is_docked = True
+    #     else:
+    #         pass
+    # if is_docked == False:    
+    #     stations[i].Bikes += f',{j}'
+    #     print(f"The bike {j} is now docked to the station {stations[i].UID}.")
 #dock_bike()
 
 def display_stations():
@@ -270,4 +295,4 @@ def user_panel():
         print(colored('\nPlease enter a valid choice!', 'red', attrs=['bold']))
         user_panel()
 
-user_panel()
+# user_panel()
