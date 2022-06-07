@@ -98,20 +98,6 @@ def dock_bike():
         bikes = [Bikes(i, data[0]) for i in data[1:]]
 
 
-dock_bike()
-    
-    
-    
-    
-    # for x in range(len(df)):
-    #     if j in df.loc[x,'Bikes']:
-    #         print("The bike is already docked to another station.")
-    #         is_docked = True
-    #     else:
-    #         pass
-    # if is_docked == False:    
-    #     stations[i].Bikes += f',{j}'
-    #     print(f"The bike {j} is now docked to the station {stations[i].UID}.")
 #dock_bike()
 
 def display_stations():
@@ -143,6 +129,7 @@ def rent_bike():
     User will rent a bike from a station, will return it after x minutes to another or the same station.
     """
     bike = input('Enter bike UID: ')
+    bike_uid = int(bike) - 1
     arrival_station = int(input('Enter station UID: '))
     battery_lost = int(input('Enter time of rental: ')) * 2
 
@@ -160,14 +147,31 @@ def rent_bike():
                 stations[i].Bikes = stations[i].Bikes.replace(', ', '')
                 stations[i].Bikes = stations[i].Bikes.replace(' ,', '')
                 stations[i].Nb_rents = int(stations[i].Nb_rents) + 1
+                departure_station_UID = int(stations[i].UID)
+                departure_station = departure_station_UID - 1
             # Add the bike to the returning station
             if int(stations[i].UID) == int(arrival_station):
                 stations[i].Bikes += f',{bike}'
                 stations[i].Nb_returns = int(stations[i].Nb_returns) + 1
+                print(f"The bike {bike} is now docked to the station {stations[i].UID}.")
+        # Update the CSV files
+        df = pd.read_csv('Stations.csv', sep=',')
+        df.set_index('UID', inplace=True)
+        df.at[arrival_station, 'Bikes'] += f',{bike}'
+        df.at[arrival_station, 'Nb_returns'] += 1
+        df.at[departure_station_UID, 'Bikes'] = stations[departure_station].Bikes
+        df.to_csv('Stations.csv', sep=',')
+        
+        df = pd.read_csv('Bikes.csv', sep=',')
+        df.set_index('UID', inplace=True)
+        df.at[bike_uid, 'battery_percent'] = int(bikes[int(bike)-1].battery_percent)
+        df.at[bike_uid, 'Nb_days'] = int(bikes[int(bike)-1].Nb_days)
+        df.at[bike_uid, 'Nb_rents'] = int(bikes[int(bike)-1].Nb_rents)
+        df.to_csv('Bikes.csv', sep=',', header=True)
 
 
-#rent_bike()
-#display_stations()
+# rent_bike()
+# display_stations()
 
 def summary():
     """
@@ -296,4 +300,4 @@ def user_panel():
         print(colored('\nPlease enter a valid choice!', 'red', attrs=['bold']))
         user_panel()
 
-# user_panel()
+user_panel()
