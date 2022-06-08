@@ -248,7 +248,7 @@ def maintenance_defective_bikes():
     # Execute the tsp algorithm
     c_lib.tsp_with_coords(array, len(stations_visit), result)
     for i in range(0, len(result)):
-        print(f"{stations[int(result[i])-1].UID}\t {stations[int(result[i])-1].Name}")
+       print(f"{stations[int(result[i])-1].UID}\t {stations[int(result[i])-1].Name}")
 
     # Use networkx to display the graph of the result path using coordinates and starting from (0,0) and going back to (0,0)
     G = nx.Graph()
