@@ -141,7 +141,7 @@ def rent_bike():
 
     bikes[int(bike)-1].battery_percent = int(bikes[int(bike)-1].battery_percent) - battery_lost
     if bikes[int(bike)-1].battery_percent < 0:
-        print(f"You can't rent this bike for {battery_lost//2} minutes.")
+        print(f"You can't rent this bike for {battery_lost//2} minutes, the maximum time is {bikes[int(bike)-1].battery_percent//2} minutes.")
         bikes[int(bike)-1].battery_percent = int(bikes[int(bike)-1].battery_percent) + battery_lost
     else :
         bikes[int(bike)-1].Nb_rents = int(bikes[int(bike)-1].Nb_rents) + 1
@@ -163,7 +163,10 @@ def rent_bike():
         # Update the CSV files
         df = pd.read_csv('Stations.csv', sep=',')
         df.set_index('UID', inplace=True)
-        df.at[arrival_station, 'Bikes'] += f',{bike}'
+        if df.at[departure_station, 'Bikes'] == '' or df.at[departure_station, 'Bikes'] == ' ':
+            df.at[departure_station, 'Bikes'] = bike
+        else:
+            df.at[arrival_station, 'Bikes'] += f',{bike}'
         df.at[arrival_station, 'Nb_returns'] += 1
         df.at[departure_station_UID, 'Bikes'] = stations[departure_station].Bikes
         df.to_csv('Stations.csv', sep=',')
@@ -183,6 +186,8 @@ def summary():
     """
     Summary of the bikes and stations.
     """
+    print("There is currently ", str(len(bikes)), " bikes and " , str(len(stations)), " stations in the system.")
+    print("The average battery level is ", round(sum([int(bikes[i].battery_percent) for i in range(len(bikes))])/len(bikes),2), " %.")
     print('\nBikes sorted by number of days in use\nUID\tBattery\tNb_days')
     sorted_bikes_uid1 = sorted(bikes, key=lambda x: int(x.Nb_days), reverse=True)
     for x in range(len(bikes)):
