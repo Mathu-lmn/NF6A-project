@@ -45,7 +45,7 @@ class Bikes:
 data = list(csv.reader(open('Bikes.csv'), delimiter=','))
 bikes = [Bikes(i, data[0]) for i in data[1:]]
 
-#print(bikes[2].UID)
+# print(bikes[2].UID)
 
 
 class Stations:
@@ -74,6 +74,7 @@ def dock_bike():
     Dock a new bike at a specific station.
     """
     global bikes
+    global stations
     station = int(input('Enter UID of the station you want to dock the new bike: '))
     # UID of the new bike is the next available UID
     bike = str(int(bikes[-1].UID) + 1)
@@ -83,12 +84,15 @@ def dock_bike():
     else:
         df = pd.read_csv('Stations.csv', sep=',')
         df.set_index('UID', inplace=True)
-        df.at[station, 'Bikes'] += f',{bike}'
+        # if there is no bike in the station, do not put the comma
+        if df.at[station, 'Bikes'] == '' or df.at[station, 'Bikes'] == ' ':
+            df.at[station, 'Bikes'] = bike
+        else:
+            df.at[station, 'Bikes'] += f',{bike}'
         df.to_csv('Stations.csv', sep=',')
         # Add the new bike with 100% battery level, 0 days and 0 rents
         df = pd.read_csv('Bikes.csv', sep=',')
         df = df.append({'UID': bike, 'battery_percent': 100, 'Nb_days': 0, 'Nb_rents': 0}, ignore_index=True)
-        print(df)
         df.to_csv('Bikes.csv', sep=',', index=False, header=True)
         print('Bike added.')
         # Read the modified files and update the class variables
@@ -107,6 +111,8 @@ def display_stations():
     print('Stations\nUID\tName\t\tBikes')
     for x in range(len(stations)):
         i = stations[x].Bikes.split(',')
+        if len(i) == 0:
+            print(f'{stations[x].UID}\t{stations[x].Name}\t\t\t')
         if len(i) == 1:
             print(f"{stations[x].UID}\t {stations[x].Name}\t {stations[x].Bikes}")
         else:
@@ -261,38 +267,38 @@ def user_panel():
     choice = int(input('\nEnter your choice: '))
     if choice == 1:
         rent_bike()
-        print("Showing panel in 20 seconds...")
-        time.sleep(20)
+        print("Showing panel in 10 seconds...")
+        time.sleep(10)
         print("Executing the user panel...")
-        time.sleep(2)
+        time.sleep(1)
         user_panel()
     elif choice == 2:
         dock_bike()
-        print("Showing panel in 20 seconds...")
-        time.sleep(20)
+        print("Showing panel in 10 seconds...")
+        time.sleep(10)
         print("Executing the user panel...")
-        time.sleep(2)
+        time.sleep(1)
         user_panel()
     elif choice == 3:
         display_stations()
-        print("Showing panel in 20 seconds...")
-        time.sleep(20)
+        print("Showing panel in 10 seconds...")
+        time.sleep(10)
         print("Executing the user panel...")
-        time.sleep(2)
+        time.sleep(1)
         user_panel()
     elif choice == 4:
         summary()
-        print("Showing panel in 20 seconds...")
-        time.sleep(20)
+        print("Showing panel in 10 seconds...")
+        time.sleep(10)
         print("Executing the user panel...")
-        time.sleep(2)
+        time.sleep(1)
         user_panel()
     elif choice == 5:
         maintenance_defective_bikes()
-        print("Showing panel in 20 seconds...")
-        time.sleep(20)
+        print("Showing panel in 10 seconds...")
+        time.sleep(10)
         print("Executing the user panel...")
-        time.sleep(2)
+        time.sleep(1)
         user_panel()
     elif choice == 6:
         print(colored('\nThank you for using the bike rental program!', 'red', attrs=['reverse']))
