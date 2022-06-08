@@ -188,25 +188,30 @@ def summary():
     """
     print("There is currently ", str(len(bikes)), " bikes and " , str(len(stations)), " stations in the system.")
     print("The average battery level is ", round(sum([int(bikes[i].battery_percent) for i in range(len(bikes))])/len(bikes),2), " %.")
-    print('\nBikes sorted by number of days in use\nUID\tBattery\tNb_days')
+    
+    print(colored('\nBikes sorted by number of days in use', 'white', attrs=['bold', 'underline']))
+    print('UID\tName\tNb_returns')
     sorted_bikes_uid1 = sorted(bikes, key=lambda x: int(x.Nb_days), reverse=True)
     for x in range(len(bikes)):
         print(f"{sorted_bikes_uid1[x].UID}\t {sorted_bikes_uid1[x].battery_percent}\t {sorted_bikes_uid1[x].Nb_days}")
     pass
 
-    print('\nBikes sorted by number of rentals\nUID\tBattery\tNb_rents')
+    print(colored('\nBikes sorted by number of rentals', 'white', attrs=['bold', 'underline']))
+    print('UID\tName\tNb_returns')    
     sorted_bikes_uid2 = sorted(bikes, key=lambda x: int(x.Nb_rents), reverse=True)
     for x in range(len(bikes)):
         print(f"{sorted_bikes_uid2[x].UID}\t {sorted_bikes_uid2[x].battery_percent}\t {sorted_bikes_uid2[x].Nb_rents}")
     pass
 
-    print("\nStations sorted by number of rents\nUID\tName\t\tNb_rents")
+    print(colored('\nStations sorted by number of rents', 'white', attrs=['bold', 'underline']))
+    print('UID\tName\tNb_returns')
     sorted_stations_uid1 = sorted(stations, key=lambda x: int(x.Nb_rents), reverse=True)
     for x in range(len(stations)):
         print(f"{sorted_stations_uid1[x].UID}\t {sorted_stations_uid1[x].Name}\t {sorted_stations_uid1[x].Nb_rents}")
     pass
 
-    print("\nStations sorted by number of returns\nUID\tName\t\tNb_returns")
+    print(colored('\nStations sorted by number of returns', 'white', attrs=['bold', 'underline']))
+    print('UID\tName\tNb_returns')
     sorted_stations_uid2 = sorted(stations, key=lambda x: int(x.Nb_returns), reverse=True)
     for x in range(len(stations)):
         print(f"{sorted_stations_uid2[x].UID}\t {sorted_stations_uid2[x].Name}\t {sorted_stations_uid2[x].Nb_returns}")
@@ -233,8 +238,9 @@ def maintenance_defective_bikes():
             bikes[i].Nb_days = int(bikes[i].Nb_days) + 1
     # Create the list of stations to visit by maintenance
     for i in range(0,len(stations)):
+        station_bikes = stations[i].Bikes.split(',')
         for j in range(0,len(defective_bikes)):
-            if str(defective_bikes[j]) in stations[i].Bikes and int(stations[i].UID) not in stations_visit:
+            if str(defective_bikes[j]) in station_bikes:
                 stations_visit.append(int(stations[i].UID))
     stations_visit = list(dict.fromkeys(stations_visit))
     array = (ct.c_int * len(stations_visit))(*stations_visit)

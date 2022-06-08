@@ -86,25 +86,25 @@ void tsp_with_coords(int stations_to_visit[], size_t size, int order[]) {
     int min_cost = INT_MAX;
     int min_cost_path_index = 0;
     for (int i = 0; i < size; i++){
-        int cost_path[size];
-        cost_path[0] = stations_to_visit[i];
-        int cost_path_index = 1;
-        int cost_path_total = 0;
+        int path[size];
+        path[0] = stations_to_visit[i];
+        int path_index = 1;
+        int path_total = 0;
         // Finding the cost of the path
         for (int j = 0; j < size; j++){
             if (j == i){
                 continue;
             }
-            cost_path[cost_path_index] = stations_to_visit[j];
-            cost_path_index++;
-            cost_path_total += cost[i][j];
+            path[path_index] = stations_to_visit[j];
+            path_index++;
+            path_total += cost[i][j];
         }
         // If the cost of the path is lower than the minimum cost, the minimum cost is updated and the path is stored
-        if (cost_path_total < min_cost){
-            min_cost = cost_path_total;
+        if (path_total < min_cost){
+            min_cost = path_total;
             min_cost_path_index = i;
             for (int k = 0; k < size; k++){
-                min_cost_path[k] = cost_path[k];
+                min_cost_path[k] = path[k];
             }
         }
     }
