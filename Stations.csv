@@ -1,6 +1,6 @@
 UID,x_location,y_location,Name,Bikes,Nb_rents,Nb_returns
 1,-119,37,Los_Santos,"4,2,5",4,8
-2,-28,12,Vinewood,"1,8,10",5,5
-3,114,36,Little_Seoul,11,2,3
+2,-28,12,Vinewood,"1,8,10,11",5,6
+3,114,36,Little_Seoul,12,2,3
 4,-75,53,Vespucci,"6,3",3,2
 5,54,23,Mirror_park,"7,9",5,4
