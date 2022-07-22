@@ -141,7 +141,7 @@ def rent_bike():
 
     bikes[int(bike)-1].battery_percent = int(bikes[int(bike)-1].battery_percent) - battery_lost
     if bikes[int(bike)-1].battery_percent < 0:
-        print(f"You can't rent this bike for {battery_lost//2} minutes, the maximum time is {bikes[int(bike)-1].battery_percent//2} minutes.")
+        print(f"You can't rent this bike for {battery_lost//2} minutes, the maximum time is {(bikes[int(bike)-1].battery_percent + battery_lost)//2} minutes.")
         bikes[int(bike)-1].battery_percent = int(bikes[int(bike)-1].battery_percent) + battery_lost
     else :
         bikes[int(bike)-1].Nb_rents = int(bikes[int(bike)-1].Nb_rents) + 1
