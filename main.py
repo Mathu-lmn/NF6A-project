@@ -209,17 +209,17 @@ def summary():
     print("The average battery level is ", round(sum([int(bikes[i].battery_percent) for i in range(len(bikes))])/len(bikes),2), " %.")
     
     print(colored('\nBikes sorted by number of days in use', 'white', attrs=['bold', 'underline']))
-    print('UID\tName\tNb_returns')
+    print('UID\tBattery\tNb_returns')
     sorted_bikes_uid1 = sorted(bikes, key=lambda x: int(x.Nb_days), reverse=True)
     for x in range(len(bikes)):
-        print(f"{sorted_bikes_uid1[x].UID}\t {sorted_bikes_uid1[x].battery_percent}\t {sorted_bikes_uid1[x].Nb_days}")
+        print(f"{sorted_bikes_uid1[x].UID}\t {sorted_bikes_uid1[x].battery_percent}%\t {sorted_bikes_uid1[x].Nb_days}")
     pass
 
     print(colored('\nBikes sorted by number of rentals', 'white', attrs=['bold', 'underline']))
-    print('UID\tName\tNb_returns')    
+    print('UID\tBattery\tNb_returns')    
     sorted_bikes_uid2 = sorted(bikes, key=lambda x: int(x.Nb_rents), reverse=True)
     for x in range(len(bikes)):
-        print(f"{sorted_bikes_uid2[x].UID}\t {sorted_bikes_uid2[x].battery_percent}\t {sorted_bikes_uid2[x].Nb_rents}")
+        print(f"{sorted_bikes_uid2[x].UID}\t {sorted_bikes_uid2[x].battery_percent}%\t {sorted_bikes_uid2[x].Nb_rents}")
     pass
 
     print(colored('\nStations sorted by number of rents', 'white', attrs=['bold', 'underline']))
