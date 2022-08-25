@@ -302,46 +302,49 @@ def user_panel():
     """
     print(colored('\nWelcome to the bike rental program!', 'green', attrs=['bold', 'underline']))
     print('\nPlease select an option:\n1. Rent a bike\n2. Dock a bike\n3. Display the stations\n4. Summary\n5. Execute the maintenance of the defective bikes\n',colored('\r6. Exit', 'red', attrs=['bold']))
-    choice = int(input('\nEnter your choice: '))
-    if choice == 1:
-        rent_bike()
-        print("Showing panel in 10 seconds...")
-        time.sleep(10)
-        print("Executing the user panel...")
-        time.sleep(1)
-        user_panel()
-    elif choice == 2:
-        dock_bike()
-        print("Showing panel in 10 seconds...")
-        time.sleep(10)
-        print("Executing the user panel...")
-        time.sleep(1)
-        user_panel()
-    elif choice == 3:
-        display_stations()
-        print("Showing panel in 10 seconds...")
-        time.sleep(10)
-        print("Executing the user panel...")
-        time.sleep(1)
-        user_panel()
-    elif choice == 4:
-        summary()
-        print("Showing panel in 10 seconds...")
-        time.sleep(10)
-        print("Executing the user panel...")
-        time.sleep(1)
-        user_panel()
-    elif choice == 5:
-        maintenance_defective_bikes()
-        print("Showing panel in 10 seconds...")
-        time.sleep(10)
-        print("Executing the user panel...")
-        time.sleep(1)
-        user_panel()
-    elif choice == 6:
-        print(colored('\nThank you for using the bike rental program!', 'red', attrs=['reverse']))
-    else:
+    choice = input('\nEnter your choice: ')
+    # if choice is not int or not in range 1-6, ask again
+    while not choice.isdigit() or int(choice) not in range(1,7):
         print(colored('\nPlease enter a valid choice!', 'red', attrs=['bold']))
         user_panel()
+    else:
+        if int(choice)== 1:
+            rent_bike()
+            print("Showing panel in 10 seconds...")
+            time.sleep(10)
+            print("Executing the user panel...")
+            time.sleep(1)
+            user_panel()
+        elif int(choice)== 2:
+            dock_bike()
+            print("Showing panel in 10 seconds...")
+            time.sleep(10)
+            print("Executing the user panel...")
+            time.sleep(1)
+            user_panel()
+        elif int(choice)== 3:
+            display_stations()
+            print("Showing panel in 10 seconds...")
+            time.sleep(10)
+            print("Executing the user panel...")
+            time.sleep(1)
+            user_panel()
+        elif int(choice)== 4:
+            summary()
+            print("Showing panel in 10 seconds...")
+            time.sleep(10)
+            print("Executing the user panel...")
+            time.sleep(1)
+            user_panel()
+        elif int(choice)== 5:
+            maintenance_defective_bikes()
+            print("Showing panel in 10 seconds...")
+            time.sleep(10)
+            print("Executing the user panel...")
+            time.sleep(1)
+            user_panel()
+        elif int(choice)== 6:
+            print(colored('\nThank you for using the bike rental program!', 'red', attrs=['reverse']))
+
 
 user_panel()
