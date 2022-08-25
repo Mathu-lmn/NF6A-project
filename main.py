@@ -92,7 +92,9 @@ def dock_bike():
         df.to_csv('Stations.csv', sep=',')
         # Add the new bike with 100% battery level, 0 days and 0 rents
         df = pd.read_csv('Bikes.csv', sep=',')
-        df = df.append({'UID': bike, 'battery_percent': 100, 'Nb_days': 0, 'Nb_rents': 0}, ignore_index=True)
+        dict_2 = {'UID': bike, 'battery_percent': 100, 'Nb_days': 0, 'Nb_rents': 0}
+        dp = pd.DataFrame(dict_2, index={len(dict_2)+1})
+        df = pd.concat([df, dp])
         df.to_csv('Bikes.csv', sep=',', index=False, header=True)
         print('Bike added.')
         # Read the modified files and update the class variables
@@ -138,7 +140,6 @@ def rent_bike():
     bike_uid = int(bike)
     arrival_station = int(input('Enter station UID: '))
     battery_lost = int(input('Enter time of rental: ')) * 2
-
     bikes[int(bike)-1].battery_percent = int(bikes[int(bike)-1].battery_percent) - battery_lost
     if bikes[int(bike)-1].battery_percent < 0:
         print(f"You can't rent this bike for {battery_lost//2} minutes, the maximum time is {(bikes[int(bike)-1].battery_percent + battery_lost)//2} minutes.")
@@ -148,29 +149,47 @@ def rent_bike():
         for i in range(0,len(stations)):
             # If the bike is docked to the station, remove it from the station
             if bike in stations[i].Bikes:
-                stations[i].Bikes = stations[i].Bikes.replace(bike, ' ')
-                stations[i].Bikes = stations[i].Bikes.replace(', ,', ',')
-                stations[i].Bikes = stations[i].Bikes.replace(', ', '')
-                stations[i].Bikes = stations[i].Bikes.replace(' ,', '')
-                stations[i].Nb_rents = int(stations[i].Nb_rents) + 1
-                departure_station_UID = int(stations[i].UID)
-                departure_station = departure_station_UID - 1
-            # Add the bike to the returning station
-            if int(stations[i].UID) == int(arrival_station):
-                stations[i].Bikes += f',{bike}'
-                stations[i].Nb_returns = int(stations[i].Nb_returns) + 1
-                print(f"The bike {bike} is now docked to the station {stations[i].UID}.")
-        # Update the CSV files
-        df = pd.read_csv('Stations.csv', sep=',')
-        df.set_index('UID', inplace=True)
-        if df.at[departure_station, 'Bikes'] == '' or df.at[departure_station, 'Bikes'] == ' ':
-            df.at[departure_station, 'Bikes'] = bike
-        else:
-            df.at[arrival_station, 'Bikes'] += f',{bike}'
-        df.at[arrival_station, 'Nb_returns'] += 1
-        df.at[departure_station_UID, 'Bikes'] = stations[departure_station].Bikes
-        df.to_csv('Stations.csv', sep=',')
-        
+                if int(stations[i].UID) == int(arrival_station):
+                    stations[i].Nb_returns = int(stations[i].Nb_returns) + 1
+                    stations[i].Nb_rents = int(stations[i].Nb_rents) + 1
+                    df = pd.read_csv('Stations.csv', sep=',')
+                    df.set_index('UID', inplace=True)
+                    df.at[arrival_station, 'Nb_rents'] += 1
+                    df.at[arrival_station, 'Nb_returns'] += 1
+                    df.to_csv('Stations.csv', sep=',')
+                    print(f"The bike {bike} is now docked to the station {stations[i].UID}.")
+                    break
+                else:
+                    stations[i].Bikes = stations[i].Bikes.replace(bike, ' ')
+                    stations[i].Bikes = stations[i].Bikes.replace(', ,', ',')
+                    stations[i].Bikes = stations[i].Bikes.replace(', ', '')
+                    stations[i].Bikes = stations[i].Bikes.replace(' ,', '')
+                    stations[i].Nb_rents = int(stations[i].Nb_rents) + 1
+                    departure_station_UID = int(stations[i].UID)
+                    departure_station = departure_station_UID - 1
+                    # Add the bike to the returning station
+                    if int(stations[i].UID) == int(arrival_station):
+                        stations[i].Bikes += f',{bike}'
+                        stations[i].Nb_returns = int(stations[i].Nb_returns) + 1
+                    print(f"The bike {bike} is now docked to the station {arrival_station}.")
+                    # Update the CSV files
+                    df = pd.read_csv('Stations.csv', sep=',')
+                    df.set_index('UID', inplace=True)
+                    if df.at[departure_station_UID, 'Bikes'] == '' or df.at[departure_station_UID, 'Bikes'] == ' ':
+                        df.at[departure_station_UID, 'Bikes'] = bike
+                    else:
+                        if df.at[arrival_station, 'Bikes'] == '' or df.at[arrival_station, 'Bikes'] == ' ':
+                            df.at[arrival_station, 'Bikes'] = bike
+                            stations[arrival_station-1].Bikes = bike
+                        else:
+                            df.at[arrival_station, 'Bikes'] += f',{bike}'
+                            stations[arrival_station-1].Bikes += f',{bike}'
+                    df.at[arrival_station, 'Nb_returns'] += 1
+                    df.at[departure_station_UID, 'Nb_rents'] += 1
+                    df.at[departure_station_UID, 'Bikes'] = stations[departure_station].Bikes
+                    df.to_csv('Stations.csv', sep=',')
+                    break
+
         df = pd.read_csv('Bikes.csv', sep=',')
         df.set_index('UID', inplace=True)
         df.at[bike_uid, 'battery_percent'] = int(bikes[int(bike)-1].battery_percent)
