@@ -251,6 +251,14 @@ def maintenance_defective_bikes():
     # Resetting the nb days of defective bikes
     for i in range(0, nb_def_bikes):
         bikes[defective_bikes[i]-1].Nb_days = 0
+        bikes[defective_bikes[i]-1].battery_percent = 100
+        #Update CSV
+        df = pd.read_csv('Bikes.csv', sep=',')
+        df.set_index('UID', inplace=True)
+        print(bikes[defective_bikes[i]-1].UID)
+        df.at[int(bikes[defective_bikes[i]-1].UID), 'battery_percent'] = int(bikes[defective_bikes[i]-1].battery_percent)
+        df.at[int(bikes[defective_bikes[i]-1].UID), 'Nb_days'] = int(bikes[defective_bikes[i]-1].Nb_days)
+        df.to_csv('Bikes.csv', sep=',', header=True)
     # If the bike is not defective, add a day to the bike
     for i in range(0, len(bikes)):
         if bikes[i].UID not in defective_bikes:
