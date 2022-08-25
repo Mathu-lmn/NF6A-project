@@ -308,43 +308,25 @@ def user_panel():
         print(colored('\nPlease enter a valid choice!', 'red', attrs=['bold']))
         user_panel()
     else:
-        if int(choice)== 1:
-            rent_bike()
-            print("Showing panel in 10 seconds...")
-            time.sleep(10)
-            print("Executing the user panel...")
-            time.sleep(1)
-            user_panel()
-        elif int(choice)== 2:
-            dock_bike()
-            print("Showing panel in 10 seconds...")
-            time.sleep(10)
-            print("Executing the user panel...")
-            time.sleep(1)
-            user_panel()
-        elif int(choice)== 3:
-            display_stations()
-            print("Showing panel in 10 seconds...")
-            time.sleep(10)
-            print("Executing the user panel...")
-            time.sleep(1)
-            user_panel()
-        elif int(choice)== 4:
-            summary()
-            print("Showing panel in 10 seconds...")
-            time.sleep(10)
-            print("Executing the user panel...")
-            time.sleep(1)
-            user_panel()
-        elif int(choice)== 5:
-            maintenance_defective_bikes()
-            print("Showing panel in 10 seconds...")
-            time.sleep(10)
-            print("Executing the user panel...")
-            time.sleep(1)
-            user_panel()
-        elif int(choice)== 6:
-            print(colored('\nThank you for using the bike rental program!', 'red', attrs=['reverse']))
+        match int(choice):
+            case 1:
+                rent_bike()
+            case 2:
+                dock_bike()
+            case 3:
+                display_stations()
+            case 4:
+                summary()
+            case 5:
+                maintenance_defective_bikes()
+            case 6:
+                print(colored('\nThank you for using the bike rental program!', 'red', attrs=['reverse']))
+                exit()
+        print("Showing panel in 10 seconds...")
+        time.sleep(10)
+        print("Executing the user panel...")
+        time.sleep(1)
+        user_panel()
 
 
 user_panel()
