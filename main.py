@@ -135,7 +135,7 @@ def rent_bike():
     User will rent a bike from a station, will return it after x minutes to another or the same station.
     """
     bike = input('Enter bike UID: ')
-    bike_uid = int(bike) - 1
+    bike_uid = int(bike)
     arrival_station = int(input('Enter station UID: '))
     battery_lost = int(input('Enter time of rental: ')) * 2
 
