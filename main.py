@@ -75,7 +75,7 @@ stations = [Stations(i, data[0]) for i in data[1:]]
 
 def dock_bike():
     """
-    Dock a new bike at a specific station.
+    It takes a new bike and docks it at a specific station
     """
     global bikes
     global stations
@@ -112,7 +112,8 @@ def dock_bike():
 
 def display_stations():
     """
-    Display all stations and the bikes docked to it in a descending order according to their battery level.
+    It takes the bikes docked to a station, sorts them by battery level, and then prints them out in a
+    descending order
     """
     print('Stations\nUID\tName\t\tPlaces lefts\tBikes')
     for x in range(len(stations)):
@@ -407,8 +408,10 @@ def user_panel():
     print(colored('\nWelcome to the bike rental program!', 'green', attrs=['bold', 'underline']))
     print('\nPlease select an option:\n1. Rent a bike\n2. Dock a bike\n3. Display the stations\n4. Add a station\n5. Summary\n6. Execute the maintenance of the defective bikes\n7. Setup the status of a station\n',colored('\r8. Exit', 'red', attrs=['bold']))
     choice = input('\nEnter your choice: ')
+
     # if choice is not int or not in range 1-8, ask again
     while not choice.isdigit() or int(choice) not in range(1,9):
+
         print(colored('\nPlease enter a valid choice!', 'red', attrs=['bold']))
         user_panel()
     else:
