@@ -13,6 +13,9 @@ import matplotlib.pyplot as plt
 from termcolor import colored
 import time
 import re
+import matplotlib.colors as colors
+import matplotlib.cm as cmx
+import utils
 
 def open_dll(name='./testlib.dll'):
     """!
@@ -111,7 +114,7 @@ def display_stations():
     """
     Display all stations and the bikes docked to it in a descending order according to their battery level.
     """
-    print('Stations\nUID\tName\t\tBikes')
+    print('Stations\nUID\tName\t\tPlaces lefts\tBikes')
     for x in range(len(stations)):
         i = stations[x].Bikes.split(',')
         if len(i) == 0:
@@ -128,8 +131,8 @@ def display_stations():
                         i[j] = bikes[int(k)-1].UID
                     else:
                         pass
-            print(f"{stations[x].UID}\t {stations[x].Name}\t {','.join(i)}")
-
+            left = int(stations[x].Max_bikes) - len(i)
+            print(f"{stations[x].UID}\t {stations[x].Name}\t{left}\t\t{','.join(i)}")
 # display_stations()
     
 
@@ -161,6 +164,9 @@ def rent_bike():
                     print(f"The bike {bike} is now docked to the station {stations[i].UID}.")
                     break
                 else:
+                    if len(stations[int(arrival_station)-1].Bikes) > int(stations[int(arrival_station)-1].Max_bikes):
+                        print(f"The station {stations[arrival_station-1].UID} is full for now.\nChoose another station please.")
+                        break
                     stations[i].Bikes = stations[i].Bikes.replace(bike, ' ')
                     stations[i].Bikes = stations[i].Bikes.replace(', ,', ',')
                     stations[i].Bikes = stations[i].Bikes.replace(', ', '')
@@ -200,7 +206,6 @@ def rent_bike():
 
 
 # rent_bike()
-# display_stations()
 
 def summary():
     """
@@ -236,6 +241,34 @@ def summary():
     for x in range(len(stations)):
         print(f"{sorted_stations_uid2[x].UID}\t {sorted_stations_uid2[x].Name}\t {sorted_stations_uid2[x].Nb_returns}")
     pass
+
+    G = nx.Graph()
+    G.add_node('Depot', pos=(0,0))
+    ColorLegend = {'Open': 1,'Full': 3,'Empty': 2, 'Closed':4}
+    val_map = {"Depot":4}
+    for i in range(0, len(stations)):
+        G.add_node(stations[i].UID, pos=(int(stations[i].x_location), int(stations[i].y_location)))
+        if utils.str2bool(stations[i].Closed) == True:
+            val_map[stations[i].UID] = ColorLegend['Closed']
+        elif stations[i].Bikes == '' or stations[i].Bikes == ' ':
+            val_map[stations[i].UID] = ColorLegend['Empty']
+        elif len(stations[i].Bikes) >= int(stations[i].Max_bikes):
+            val_map[stations[i].UID] = ColorLegend['Full']
+        else:
+            val_map[stations[i].UID] = ColorLegend['Open']
+    values = [val_map.get(node, 0) for node in G.nodes()]
+    jet = cm = plt.get_cmap('jet')
+    cNorm  = colors.Normalize(vmin=0, vmax=max(values))
+    scalarMap = cmx.ScalarMappable(norm=cNorm, cmap=jet)
+    f = plt.figure(1)
+    ax = f.add_subplot(1,1,1)
+    for label in ColorLegend:
+        ax.plot([0],[0],color=scalarMap.to_rgba(ColorLegend[label]),label=label)
+    
+    nx.draw(G, pos=nx.get_node_attributes(G, 'pos'),cmap = jet,vmin=0, vmax= max(values),node_color=values, with_labels=True,ax=ax)
+    plt.legend()
+    f.tight_layout()
+    plt.show()
 
 # summary()
 
@@ -305,6 +338,7 @@ def add_station():
     station_xloc = input('Enter the x coordinates : ')
     station_yloc = input('Enter the y coordinates : ')
     station_name = re.sub(r"\s+", '_', station_name)
+    station_max = int(input('Enter the maximum number of bikes : '))
     # UID of the new station is the next available UID
     station_uid = str(int(stations[-1].UID) + 1)
     # If the name already exists in the system, you can't add it
@@ -314,7 +348,7 @@ def add_station():
     else:
         # Add the new bike with 100% battery level, 0 days and 0 rents
         df = pd.read_csv('Stations.csv', sep=',')
-        dict_2 = {'UID': station_uid, 'x_location': station_xloc, 'y_location': station_yloc, 'Name': station_name, 'Bikes': ' ', 'Nb_rents':0, 'Nb_returns':0}
+        dict_2 = {'UID': station_uid, 'x_location': station_xloc, 'y_location': station_yloc, 'Name': station_name, 'Bikes': ' ', 'Nb_rents':0, 'Nb_returns':0, 'Max_bikes': station_max, 'Closed': "False"}
         dp = pd.DataFrame(dict_2, index={len(dict_2)+1})
         df = pd.concat([df, dp])
         df.to_csv('Stations.csv', sep=',', index=False, header=True)
@@ -328,16 +362,53 @@ def add_station():
 
 #add_station()
 
+
+def status_station():
+    """
+    Edit status of a station
+    """
+    global stations
+    station_uid = int(input('Enter station UID: '))
+    station_status = input('Type "open" or "close" to define the status of the station : ')
+    status = ""
+    b_status = ""
+    c_status = ""
+    if station_status == "open":
+        status = "False"
+        b_status = "open"
+        c_status = "close"
+    elif station_status == "close":
+        status = "True"
+        b_status = "close"
+        c_status = "open"
+    else:
+        print(colored('Invalid status', 'red'))
+        return
+    df = pd.read_csv('Stations.csv', sep=',')
+    df.set_index('UID', inplace=True)
+    df.at[int(station_uid), 'Closed'] = status
+    df.to_csv('Stations.csv', sep=',', header=True)
+    print(f'Station status updated from {c_status} to {b_status}.')
+    # Read the modified files and update the class variables
+    data = list(csv.reader(open('Stations.csv'), delimiter=','))
+    stations = [Stations(i, data[0]) for i in data[1:]]
+    data = list(csv.reader(open('Bikes.csv'), delimiter=','))
+    bikes = [Bikes(i, data[0]) for i in data[1:]]
+
+
+#status_station()
+
+
 # Create a user panel in the terminal to navigate through the program
 def user_panel():
     """
     User panel to navigate through the program.
     """
     print(colored('\nWelcome to the bike rental program!', 'green', attrs=['bold', 'underline']))
-    print('\nPlease select an option:\n1. Rent a bike\n2. Dock a bike\n3. Display the stations\n4. Add a station\n5. Summary\n6. Execute the maintenance of the defective bikes\n',colored('\r7. Exit', 'red', attrs=['bold']))
+    print('\nPlease select an option:\n1. Rent a bike\n2. Dock a bike\n3. Display the stations\n4. Add a station\n5. Summary\n6. Execute the maintenance of the defective bikes\n7. Setup the status of a station\n',colored('\r8. Exit', 'red', attrs=['bold']))
     choice = input('\nEnter your choice: ')
-    # if choice is not int or not in range 1-6, ask again
-    while not choice.isdigit() or int(choice) not in range(1,8):
+    # if choice is not int or not in range 1-8, ask again
+    while not choice.isdigit() or int(choice) not in range(1,9):
         print(colored('\nPlease enter a valid choice!', 'red', attrs=['bold']))
         user_panel()
     else:
@@ -355,10 +426,12 @@ def user_panel():
             case 6:
                 maintenance_defective_bikes()
             case 7:
+                status_station()
+            case 8:
                 print(colored('\nThank you for using the bike rental program!', 'red', attrs=['reverse']))
                 exit()
-        print("Showing panel in 10 seconds...")
-        time.sleep(10)
+        print("Showing panel in 5 seconds...")
+        time.sleep(4)
         print("Executing the user panel...")
         time.sleep(1)
         user_panel()
