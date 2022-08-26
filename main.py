@@ -12,6 +12,7 @@ import networkx as nx
 import matplotlib.pyplot as plt
 from termcolor import colored
 import time
+import re
 
 def open_dll(name='./testlib.dll'):
     """!
@@ -295,56 +296,72 @@ def maintenance_defective_bikes():
 
 # maintenance_defective_bikes()
 
+def add_station():
+    """
+    Add a new station to the system.
+    """
+    global stations
+    station_name = input('Enter the name of the new station : ')
+    station_xloc = input('Enter the x coordinates : ')
+    station_yloc = input('Enter the y coordinates : ')
+    station_name = re.sub(r"\s+", '_', station_name)
+    # UID of the new station is the next available UID
+    station_uid = str(int(stations[-1].UID) + 1)
+    # If the name already exists in the system, you can't add it
+    if station_name in [x.Name for x in stations]:
+        print(colored('This name already exists in the system', 'red'))
+        return
+    else:
+        # Add the new bike with 100% battery level, 0 days and 0 rents
+        df = pd.read_csv('Stations.csv', sep=',')
+        dict_2 = {'UID': station_uid, 'x_location': station_xloc, 'y_location': station_yloc, 'Name': station_name, 'Bikes': ' ', 'Nb_rents':0, 'Nb_returns':0}
+        dp = pd.DataFrame(dict_2, index={len(dict_2)+1})
+        df = pd.concat([df, dp])
+        df.to_csv('Stations.csv', sep=',', index=False, header=True)
+        print('Station added.')
+        # Read the modified files and update the class variables
+        data = list(csv.reader(open('Stations.csv'), delimiter=','))
+        stations = [Stations(i, data[0]) for i in data[1:]]
+        data = list(csv.reader(open('Bikes.csv'), delimiter=','))
+        bikes = [Bikes(i, data[0]) for i in data[1:]]
+
+
+#add_station()
+
 # Create a user panel in the terminal to navigate through the program
 def user_panel():
     """
     User panel to navigate through the program.
     """
     print(colored('\nWelcome to the bike rental program!', 'green', attrs=['bold', 'underline']))
-    print('\nPlease select an option:\n1. Rent a bike\n2. Dock a bike\n3. Display the stations\n4. Summary\n5. Execute the maintenance of the defective bikes\n',colored('\r6. Exit', 'red', attrs=['bold']))
+    print('\nPlease select an option:\n1. Rent a bike\n2. Dock a bike\n3. Display the stations\n4. Add a station\n5. Summary\n6. Execute the maintenance of the defective bikes\n',colored('\r7. Exit', 'red', attrs=['bold']))
     choice = input('\nEnter your choice: ')
     # if choice is not int or not in range 1-6, ask again
-    while not choice.isdigit() or int(choice) not in range(1,7):
+    while not choice.isdigit() or int(choice) not in range(1,8):
         print(colored('\nPlease enter a valid choice!', 'red', attrs=['bold']))
         user_panel()
     else:
-        if int(choice)== 1:
-            rent_bike()
-            print("Showing panel in 10 seconds...")
-            time.sleep(10)
-            print("Executing the user panel...")
-            time.sleep(1)
-            user_panel()
-        elif int(choice)== 2:
-            dock_bike()
-            print("Showing panel in 10 seconds...")
-            time.sleep(10)
-            print("Executing the user panel...")
-            time.sleep(1)
-            user_panel()
-        elif int(choice)== 3:
-            display_stations()
-            print("Showing panel in 10 seconds...")
-            time.sleep(10)
-            print("Executing the user panel...")
-            time.sleep(1)
-            user_panel()
-        elif int(choice)== 4:
-            summary()
-            print("Showing panel in 10 seconds...")
-            time.sleep(10)
-            print("Executing the user panel...")
-            time.sleep(1)
-            user_panel()
-        elif int(choice)== 5:
-            maintenance_defective_bikes()
-            print("Showing panel in 10 seconds...")
-            time.sleep(10)
-            print("Executing the user panel...")
-            time.sleep(1)
-            user_panel()
-        elif int(choice)== 6:
-            print(colored('\nThank you for using the bike rental program!', 'red', attrs=['reverse']))
+        match int(choice):
+            case 1:
+                rent_bike()
+            case 2:
+                dock_bike()
+            case 3:
+                display_stations()
+            case 4:
+                add_station()
+            case 5:
+                summary()
+            case 6:
+                maintenance_defective_bikes()
+            case 7:
+                print(colored('\nThank you for using the bike rental program!', 'red', attrs=['reverse']))
+                exit()
+        print("Showing panel in 10 seconds...")
+        time.sleep(10)
+        print("Executing the user panel...")
+        time.sleep(1)
+        user_panel()
 
 
 user_panel()
